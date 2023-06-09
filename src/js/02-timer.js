@@ -85,35 +85,40 @@ import 'flatpickr/dist/flatpickr.min.css';
 const refs = {
   dateTimePicker: document.querySelector('input[type="text"]'),
   button: document.querySelector('button[data-start]'),
-  days: document.querySelector('[data-days]'),
-  hours: document.querySelector('[data-hours]'),
-  minutes: document.querySelector('[data-minutes]'),
-  seconds: document.querySelector('[data-seconds]'),
+  firstTimer: {
+    days: document.querySelector('[data-days="first-timer"]'),
+    hours: document.querySelector('[data-hours="first-timer"]'),
+    minutes: document.querySelector('[data-minutes="first-timer"]'),
+    seconds: document.querySelector('[data-seconds="first-timer"]'),
+  },
 };
 
-refs.button.addEventListener('click', () => {
-  firstTimer.activateTimer();
-});
+const optionsFlatpickr = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose([selectedDates]) {
+    if (selectedDates <= optionsFlatpickr.defaultDate) {
+      refs.button.disabled = true;
+      return window.alert('Please choose a date in the future');
+    }
+
+    refs.button.disabled = false;
+    Timer.targetDate = selectedDates.getTime();
+  },
+};
 
 class Timer {
-  targetDate;
+  static targetDate;
 
-  constructor({ days, hours, minutes, seconds, targetDate }) {
+  constructor({ days, hours, minutes, seconds }) {
     this.days = days;
     this.hours = hours;
     this.minutes = minutes;
     this.seconds = seconds;
-    this.targetDate = targetDate;
     this.isActive = false;
     this.tolerance = 1000;
-  }
-
-  get targetDate() {
-    return this.targetDate;
-  }
-
-  set targetDate(newTargetDate) {
-    this.targetDate = newTargetDate;
   }
 
   activateTimer() {
@@ -123,7 +128,7 @@ class Timer {
 
     const timerId = setInterval(() => {
       const currentTime = Date.now();
-      const difference = this.targetDate - currentTime;
+      const difference = Timer.targetDate - currentTime;
 
       if (difference < this.tolerance) {
         this.isActive = false;
@@ -165,27 +170,12 @@ class Timer {
   }
 }
 
-const firstTimer = new Timer({
-  days: document.querySelector('[data-days]'),
-  hours: document.querySelector('[data-hours]'),
-  minutes: document.querySelector('[data-minutes]'),
-  seconds: document.querySelector('[data-seconds]'),
-});
-
-const optionsFlatpickr = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  onClose([selectedDates]) {
-    if (selectedDates <= optionsFlatpickr.defaultDate) {
-      refs.button.disabled = true;
-      return window.alert('Please choose a date in the future');
-    }
-
-    refs.button.disabled = false;
-    firstTimer.targetDate = selectedDates.getTime();
-  },
-};
+const firstTimer = new Timer(
+  ({ days, hours, minutes, seconds } = refs.firstTimer)
+);
 
 flatpickr(refs.dateTimePicker, optionsFlatpickr);
+
+refs.button.addEventListener('click', () => {
+  firstTimer.activateTimer();
+});
