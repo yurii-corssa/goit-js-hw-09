@@ -16,8 +16,9 @@ form.addEventListener('submit', event => {
 function runQueue(delay, step, amount) {
   setTimeout(() => {
     let intervalNumber = 1;
+    let delayCounter = delay;
 
-    createPromise(intervalNumber, delay);
+    createPromise(intervalNumber, delayCounter);
 
     const intervalId = setInterval(() => {
       if (intervalNumber === amount) {
@@ -26,8 +27,9 @@ function runQueue(delay, step, amount) {
       }
 
       intervalNumber += 1;
+      delayCounter += step;
 
-      createPromise(intervalNumber, delay);
+      createPromise(intervalNumber, delayCounter);
     }, step);
   }, delay);
 }
