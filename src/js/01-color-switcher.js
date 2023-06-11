@@ -7,6 +7,8 @@ const refs = {
 refs.startBtn.addEventListener('click', startSwitchColors);
 refs.stopBtn.addEventListener('click', stopSwitchColor);
 
+let timerId = null;
+
 function startSwitchColors() {
   timerId = setInterval(() => {
     refs.body.style.backgroundColor = getRandomHexColor();
