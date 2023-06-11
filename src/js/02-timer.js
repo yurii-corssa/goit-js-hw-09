@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
 const refs = {
   dateTimePicker: document.querySelector('input[type="text"]'),
@@ -20,7 +21,7 @@ const optionsFlatpickr = {
 
     if (selectedDates <= defaultDate) {
       refs.button.disabled = true;
-      window.alert('Please choose a date in the future');
+      Report.failure('Please choose a date in the future');
       return;
     }
 
@@ -54,6 +55,7 @@ class Timer {
         this.isActive = false;
         clearInterval(timerId);
         this.onTick(timerTime);
+        Report.success('The time is up');
         return;
       }
 
